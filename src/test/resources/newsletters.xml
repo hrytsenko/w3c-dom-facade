@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fonts>
+    <newsletter subject="Technology">
+        <recipient email="john@any.org" name="John" />
+        <recipient email="james@any.org" name="James" />
+    </newsletter>
+    <newsletter subject="Healthcare">
+        <recipient email="john@any.org" name="John" />
+        <recipient email="mark@any.org" name="Mark" />
+        <recipient email="robert@any.org" name="Robert" />
+    </newsletter>
+</fonts>
