@@ -53,6 +53,20 @@ import com.google.common.base.Strings;
  */
 public final class XmlElement {
 
+    private final Node node;
+
+    /**
+     * Create the element for {@link Node}.
+     * 
+     * @param node
+     *            the node of XML document.
+     */
+    private XmlElement(Node node) {
+        Preconditions.checkArgument(isElement(node), "Node is not an element.");
+
+        this.node = node;
+    }
+
     /**
      * Get the root element of the document.
      * 
@@ -90,27 +104,13 @@ public final class XmlElement {
         }
     }
 
-    private final Node node;
-
-    /**
-     * Create the element for {@link Node}.
-     * 
-     * @param node
-     *            the node of XML document.
-     */
-    private XmlElement(Node node) {
-        Preconditions.checkArgument(isElement(node), "Node is not an element.");
-
-        this.node = node;
-    }
-
     /**
      * Try get the parent of this element.
      * 
      * @return the parent element.
      */
     public Optional<XmlElement> tryGetParent() {
-        return toElement(node.getParentNode());
+        return tryFind("parent::node()");
     }
 
     /**
@@ -133,7 +133,7 @@ public final class XmlElement {
     }
 
     /**
-     * Try find the Nth matching element inside this element.
+     * Try find the first matching element inside this element.
      * 
      * @param xpathExpression
      *            the XPath expression.
@@ -148,7 +148,7 @@ public final class XmlElement {
     }
 
     /**
-     * Find the Nth matching element inside this element.
+     * Find the first matching element inside this element.
      * 
      * @param xpathExpression
      *            the XPath expression.
@@ -207,7 +207,7 @@ public final class XmlElement {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of attribute is null or empty.");
 
         Node attribute = node.getAttributes().getNamedItem(name);
-        return Optional.ofNullable(attribute).map(n -> textOf(n));
+        return Optional.ofNullable(attribute).map(XmlElement::textOf);
     }
 
     /**
@@ -241,7 +241,7 @@ public final class XmlElement {
      */
     public Set<String> getAttributes() {
         NamedNodeMap nodes = node.getAttributes();
-        return IntStream.range(0, nodes.getLength()).mapToObj(i -> nodes.item(i)).map(n -> n.getNodeName())
+        return IntStream.range(0, nodes.getLength()).mapToObj(nodes::item).map(Node::getNodeName)
                 .collect(Collectors.toSet());
     }
 
@@ -260,24 +260,14 @@ public final class XmlElement {
         try {
             XPath xpath = XPathFactory.newInstance().newXPath();
             NodeList nodes = (NodeList) xpath.evaluate(xpathExpression, node, XPathConstants.NODESET);
-            return IntStream.range(0, nodes.getLength()).mapToObj(i -> nodes.item(i)).map(n -> toElement(n))
-                    .filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toList());
+            return IntStream.range(0, nodes.getLength()).mapToObj(nodes::item).filter(XmlElement::isElement)
+                    .map(XmlElement::new).collect(Collectors.toList());
         } catch (XPathExpressionException exception) {
             throw new IllegalArgumentException("Invalid XPath expression.", exception);
         }
     }
 
-    private static Optional<XmlElement> toElement(Node node) {
-        if (!isElement(node)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new XmlElement(node));
-    }
-
     private static boolean isElement(Node node) {
-        Preconditions.checkNotNull(node, "Node is null.");
-
         return node.getNodeType() == Node.ELEMENT_NODE;
     }
 
