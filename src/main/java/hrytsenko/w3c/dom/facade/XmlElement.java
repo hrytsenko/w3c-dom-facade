@@ -19,12 +19,10 @@
  */
 package hrytsenko.w3c.dom.facade;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -59,27 +57,12 @@ public final class XmlElement {
      * Create the element for {@link Node}.
      * 
      * @param node
-     *            the node of XML document.
+     *            the node of the XML document.
      */
     private XmlElement(Node node) {
         Preconditions.checkArgument(isElement(node), "Node is not an element.");
 
         this.node = node;
-    }
-
-    /**
-     * Get the root element of the document.
-     * 
-     * @param data
-     *            the content of XML document.
-     * 
-     * @return the root element.
-     * 
-     * @throws IllegalArgumentException
-     *             if XML document is invalid.
-     */
-    public static XmlElement rootOf(byte[] data) {
-        return rootOf(new ByteArrayInputStream(data));
     }
 
     /**
@@ -91,7 +74,7 @@ public final class XmlElement {
      * @return the root element.
      * 
      * @throws IllegalArgumentException
-     *             if XML document is invalid.
+     *             if the XML document is invalid.
      */
     public static XmlElement rootOf(InputStream stream) {
         try {
@@ -141,7 +124,7 @@ public final class XmlElement {
      * @return the found element.
      * 
      * @throws IllegalArgumentException
-     *             if XPath expression is invalid.
+     *             if the XPath expression is invalid.
      */
     public Optional<XmlElement> tryFind(String xpathExpression) {
         return findAll(xpathExpression).stream().findFirst();
@@ -156,9 +139,9 @@ public final class XmlElement {
      * @return the found element.
      * 
      * @throws IllegalArgumentException
-     *             if XPath expression is invalid.
+     *             if the XPath expression is invalid.
      * @throws NoSuchElementException
-     *             if element not found.
+     *             if the matching element not found.
      */
     public XmlElement find(String xpathExpression) {
         return tryFind(xpathExpression).orElseThrow(NoSuchElementException::new);
@@ -173,7 +156,7 @@ public final class XmlElement {
      * @return the list of elements.
      * 
      * @throws IllegalArgumentException
-     *             if XPath expression is invalid.
+     *             if the XPath expression is invalid.
      */
     public List<XmlElement> findAll(String xpathExpression) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(xpathExpression), "XPath expression is null or empty.");
@@ -191,17 +174,15 @@ public final class XmlElement {
     }
 
     /**
-     * Try get the value of attribute by its name.
+     * Try get the value of the attribute by its name.
      * 
      * @param name
-     *            the name of attribute.
+     *            the attribute name.
      * 
-     * @return the value of attribute.
+     * @return the attribute value.
      * 
      * @throws IllegalArgumentException
-     *             if name is <code>null</code> or empty.
-     * @throws NoSuchElementException
-     *             if attribute not found.
+     *             if the attribute name is <code>null</code> or empty.
      */
     public Optional<String> tryGetAttribute(String name) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of attribute is null or empty.");
@@ -211,15 +192,15 @@ public final class XmlElement {
     }
 
     /**
-     * Get the value of attribute by its name.
+     * Get the value of the attribute by its name.
      * 
      * @param name
-     *            the name of attribute.
+     *            the attribute name.
      * 
-     * @return the value of attribute.
+     * @return the attribute value.
      * 
      * @throws IllegalArgumentException
-     *             if name is <code>null</code> or empty.
+     *             if the attribute name is <code>null</code> or empty.
      * @throws NoSuchElementException
      *             if attribute not found.
      */
@@ -237,18 +218,18 @@ public final class XmlElement {
     /**
      * Get names of all attributes.
      * 
-     * @return the unordered set of attributes.
+     * @return the list of attributes names.
      */
-    public Set<String> getAttributes() {
+    public List<String> getAttributes() {
         NamedNodeMap nodes = node.getAttributes();
         return IntStream.range(0, nodes.getLength()).mapToObj(nodes::item).map(Node::getNodeName)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     /**
      * Short form for {@link #getAttributes()}.
      */
-    public Set<String> attrs() {
+    public List<String> attrs() {
         return getAttributes();
     }
 
