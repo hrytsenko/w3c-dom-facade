@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import com.google.common.io.Resources;
 
-public class XmlElementTests {
+public class XmlElementTest {
 
     private XmlElement newsletters;
 
