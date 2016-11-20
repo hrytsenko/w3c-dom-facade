@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/hrytsenko/w3c-dom-facade.svg?branch=master)](https://travis-ci.org/hrytsenko/w3c-dom-facade)
+[![Coverage Status](https://coveralls.io/repos/github/hrytsenko/w3c-dom-facade/badge.svg)](https://coveralls.io/github/hrytsenko/w3c-dom-facade)
 
 # Summary
 
